@@ -1,7 +1,28 @@
 <?php declare(strict_types=1);
+/**
+ * Disrex V.O.F.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Disrex.nl license that is
+ * available through the world-wide-web at this URL:
+ * https://www.disrex.nl/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @author Disrex V.O.F
+ * @category Modules
+ * @copyright Copyright (c) Disrex V.O.F. (https://www.disrex.nl, support@disrex.nl)
+ * @year 2025
+ */
 
-namespace Magewirephp\MagewireBackend\Controller\Adminhtml\Post;
+namespace Disrex\MagewireBackend\Controller\Adminhtml\Post;
 
+use Disrex\MagewireBackend\Exception\InvalidHttpMethodException;
+use Disrex\MagewireBackend\Exception\InvalidHttpParameterException;
 use Exception;
 use Laminas\Http\AbstractMessage;
 use Magento\Backend\App\Action;
@@ -15,19 +36,17 @@ use Magento\Framework\Serialize\SerializerInterface;
 use Magewirephp\Magewire\Component;
 use Magewirephp\Magewire\Exception\LifecycleException;
 use Magewirephp\Magewire\Helper\Security as SecurityHelper;
-use Magewirephp\Magewire\ViewModel\Magewire as MagewireViewModel;
-use Magewirephp\Magewire\Model\RequestInterface as MagewireRequestInterface;
 use Magewirephp\Magewire\Model\ComponentResolver;
 use Magewirephp\Magewire\Model\HttpFactory;
-use Magewirephp\MagewireBackend\Exception\InvalidHttpMethodException;
-use Magewirephp\MagewireBackend\Exception\InvalidHttpParameterException;
+use Magewirephp\Magewire\Model\RequestInterface as MagewireRequestInterface;
+use Magewirephp\Magewire\ViewModel\Magewire as MagewireViewModel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Livewire extends Action
 {
-    const ADMIN_RESOURCE = 'Magewirephp_MagewireBackend::admin';
+    const ADMIN_RESOURCE = 'Disrex_MagewireBackend::admin';
 
     protected HttpFactory $httpFactory;
     protected JsonFactory $resultJsonFactory;
@@ -39,15 +58,15 @@ class Livewire extends Action
     protected State $appState;
 
     public function __construct(
-        Context $context,
-        JsonFactory $resultJsonFactory,
+        Context             $context,
+        JsonFactory         $resultJsonFactory,
         SerializerInterface $serializer,
-        HttpFactory $httpFactory,
-        SecurityHelper $securityHelper,
-        LoggerInterface $logger,
-        MagewireViewModel $magewireViewModel,
-        ComponentResolver $componentResolver,
-        State $appState
+        HttpFactory         $httpFactory,
+        SecurityHelper      $securityHelper,
+        LoggerInterface     $logger,
+        MagewireViewModel   $magewireViewModel,
+        ComponentResolver   $componentResolver,
+        State               $appState
     ) {
         parent::__construct($context);
         $this->httpFactory = $httpFactory;

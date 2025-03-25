@@ -1,57 +1,58 @@
 # MageWire Backend module for Magento 2
 
-**This module supplies Magewire compatibility for the Magento Admin Panel. It is built on top of the Magewire core (with RequireJS support).**
+**Voeg Magewire-functionaliteit toe aan de Magento Admin Panel. Gebouwd bovenop de Magewire core met
+RequireJS-ondersteuning.**
 
-**WARNING: This is current in development. It might work for you, it might not. If you want to collaborate, you are welcome to join.**
+> ⚠️ Dit project is in actieve ontwikkeling. Gebruik is op eigen risico. Wil je bijdragen? Je bent welkom!
 
-### Installation
-First install the composer package from this repository:
-```bash
-composer config repositories.magewire-backend vcs git@github.com:michielgerritsen/magewire-backend.git
-composer require magewirephp/magewire-backend:@dev
-```
+---
 
-Note that the current package also requires a Pull Request to be merged into the Magewire core (to reuse all of the current view files). To integrate this PR temporarily in your setup, we can use a composer patch:
+## ✅ Installatie
 
+Gebruik onderstaande opdracht om alles automatisch te installeren (inclusief patch voor Magewire core):
 
 ```bash
-composer require cweagans/composer-patches
+composer require disrex/magewire-backend
 ```
 
-Next, in your own root `composer.json` file, make sure to include the Pull Request:
-```json
-{
-	"extra": {
-	 "patches": {
-      "magewirephp/magewire": {
-         "Compatibility with backend": "https://patch-diff.githubusercontent.com/raw/magewirephp/magewire/pull/139.patch"
-      }
-    }
-	}
-}
-```
+> Let op: deze module voegt automatisch de benodigde patch toe aan `magewirephp/magewire`, inclusief de benodigde
+> dependency `composer-patches`.
 
-Update composer:
+Daarna, activeer de modules:
+
 ```bash
-composer update magewirephp/magewire
+bin/magento module:enable Magewirephp_Magewire Magewirephp_MagewireRequireJs Disrex_MagewireBackend
 ```
 
-Afterwards, enable all of the relevant modules:
+Magewire in de backend wordt pas geladen zodra er een component gebruik van maakt. Je kunt dit herkennen aan geladen
+JavaScript-bestanden met de naam `magewire`.
+
+---
+
+## 🧪 Voorbeeldcomponent
+
+Wil je testen of alles werkt? Gebruik dan een voorbeeldmodule zoals deze `Hello World` component:
+
 ```bash
-bin/magento module:enable Magewirephp_Magewire Magewirephp_MagewireRequireJs Magewirephp_MagewireBackend
-```
-
-Please note that Magewire will only be loaded, if there actually is a component making use of it. However, you should be able to inspect the loading of various JS files with the word `magewire`.
-
-### Proof of concept
-Create a custom XML layout to add a `block` somewhere in the admin. Add an argument `magewire` referring to a custom Magewire component class.
-
-You could also use the following example which displays an input with `Hello World` on the dashboard page:
-```bash
-composer config repositories.magewire-backend vcs git@github.com:yireo-training/YireoTraining_MageWireBackendHelloWorld.git
+composer config repositories.yireo-training vcs git@github.com:yireo-training/YireoTraining_MageWireBackendHelloWorld.git
 composer require yireo-training/magento2-magewire-backend-hello-world:@dev
 bin/magento module:enable YireoTraining_MageWireBackendHelloWorld
 ```
 
-Other examples:
+Of probeer:
+
 - [Yireo_MageWireBackendConfigSearch](https://github.com/yireo/Yireo_MageWireBackendConfigSearch)
+
+---
+
+## 🧠 Tip
+
+Wil je zelf een component bouwen? Voeg een `block` toe via XML in de admin met een `magewire`-argument dat verwijst naar
+je eigen Magewire-component class.
+
+---
+
+## 👨‍💻 Ondersteuning
+
+Heb je vragen of wil je meewerken? Open een discussie
+op [GitHub Discussions](https://github.com/disrex/magewire-backend/discussions).
