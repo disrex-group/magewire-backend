@@ -9,7 +9,7 @@
         "magewirephp/magewire": "^1.1",
         "magewirephp/magewire-requirejs": "^1.1",
         "symfony/http-foundation": "^5.4 || ^6.0",
-        "disrex/magewire-backend-patch": "^1.0"
+        "disrex/magewire-backend-patcher": "^1.0"
     },
     "autoload": {
         "files": [
