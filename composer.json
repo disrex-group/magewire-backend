@@ -8,24 +8,15 @@
         "magento/framework": "^102.0 | ^103.0",
         "magewirephp/magewire": "^1.1",
         "magewirephp/magewire-requirejs": "^1.1",
-        "cweagans/composer-patches": "^1.7",
-        "symfony/http-foundation": "^5.4 || ^6.0"
-    },
-    "extra": {
-        "patches": {
-            "magewirephp/magewire": {
-                "Compatibility with backend": "https://patch-diff.githubusercontent.com/raw/magewirephp/magewire/pull/139.patch"
-            }
-        },
-        "class": "Composer\\MagewirePatchPlugin\\Plugin"
+        "symfony/http-foundation": "^5.4 || ^6.0",
+        "disrex/magewire-backend-patch": "^1.0"
     },
     "autoload": {
         "files": [
             "registration.php"
         ],
         "psr-4": {
-            "Disrex\\MagewireBackend\\": "",
-            "Composer\\MagewirePatchPlugin\\": "Composer/MagewirePatchPlugin/"
+            "Disrex\\MagewireBackend\\": ""
         }
     },
     "support": {
