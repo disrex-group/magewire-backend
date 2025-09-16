@@ -56,6 +56,7 @@ class Livewire extends Action
     protected ComponentResolver $componentResolver;
     protected SerializerInterface $serializer;
     protected State $appState;
+    private ?Component $cachedComponent = null;
 
     public function __construct(
         Context             $context,
@@ -79,6 +80,47 @@ class Livewire extends Action
         $this->appState = $appState;
     }
 
+    /**
+     * Check if user has permissions to access the specific Magewire component
+     *
+     * @return bool
+     */
+    protected function _isAllowed()
+    {
+        try {
+            // Try to get the request params
+            $params = $this->getRequestParams();
+            if (empty($params)) {
+                // If no params yet, fall back to default
+                return $this->_authorization->isAllowed(static::ADMIN_RESOURCE);
+            }
+
+            // Create request object
+            $request = $this->httpFactory->createRequest($params)->isSubsequent(true);
+
+            // Locate and cache the component
+            $this->cachedComponent = $this->locateWireComponent($request);
+            $this->cachedComponent->setRequest($request);
+
+            // Get component class to check for ADMIN_RESOURCE constant
+            $componentClass = get_class($this->cachedComponent);
+
+            // Check if component defines its own ADMIN_RESOURCE
+            if (defined($componentClass . '::ADMIN_RESOURCE')) {
+                $aclResource = constant($componentClass . '::ADMIN_RESOURCE');
+                return $this->_authorization->isAllowed($aclResource);
+            }
+        } catch (\Exception $e) {
+            // Log error but don't expose it
+            $this->logger->debug('ACL check error: ' . $e->getMessage());
+            // Clear cache on error
+            $this->cachedComponent = null;
+        }
+
+        // Fall back to default ACL resource
+        return $this->_authorization->isAllowed(static::ADMIN_RESOURCE);
+    }
+
     public function execute(): Json
     {
         try {
@@ -86,14 +128,22 @@ class Livewire extends Action
                 throw new InvalidHttpMethodException('Only POST requests are allowed');
             }
 
-            try {
-                $request = $this->httpFactory->createRequest($this->getRequestParams())->isSubsequent(true);
-            } catch (LocalizedException $exception) {
-                throw new HttpException(400);
-            }
+            // Check if we have a cached component from _isAllowed()
+            if ($this->cachedComponent !== null) {
+                $component = $this->cachedComponent;
+                // Clear cache after use
+                $this->cachedComponent = null;
+            } else {
+                // Normal flow if not cached (shouldn't happen in normal flow)
+                try {
+                    $request = $this->httpFactory->createRequest($this->getRequestParams())->isSubsequent(true);
+                } catch (LocalizedException $exception) {
+                    throw new HttpException(400);
+                }
 
-            $component = $this->locateWireComponent($request);
-            $component->setRequest($request);
+                $component = $this->locateWireComponent($request);
+                $component->setRequest($request);
+            }
 
             $html = $component->getParent()->toHtml();
             $response = $component->getResponse();
